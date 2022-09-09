@@ -1,0 +1,10 @@
+{
+  "name": "User Story Thumbnail",
+  "id": "1150038753482516464",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html"
+}

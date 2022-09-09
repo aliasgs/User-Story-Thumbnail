@@ -1,0 +1,31 @@
+<h2>Create Thumbnail</h2>
+<button id="create">Create Frame</button>
+<button id="thumbnail">Set As Thumbnail</button>
+<button id="create-content">create content</button>
+
+<button id="cancel">Cancel</button>
+
+
+
+
+<script>
+
+  document.getElementById('create').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'create-frame' } }, '*')
+  }
+
+  document.getElementById('create-content').onclick = () => {
+
+    parent.postMessage({ pluginMessage: { type: 'create-content' } }, '*')
+
+  }
+  document.getElementById('thumbnail').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'set-as-thumbnail' } }, '*')
+  }
+  document.getElementById('cancel').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+  }
+
+
+
+</script>
