@@ -1,31 +1,50 @@
-<h2>Create Thumbnail</h2>
-<button id="create">Create Thumbnail</button>
-<button id="thumbnail">Set As Thumbnail</button>
-<button id="create-content">create content</button>
+<h2>Create User Story Thumbnail</h2>
 
-<button id="cancel">Cancel</button>
+<p>
+  <input type="text" id="product" placeholder="Type Product">
+  <input type="text" id="US_ID" placeholder="Type User Story ID">
+  <input type="text" id="US_title" placeholder="Type User Story Title">
+</p>
+<p>
+  <button id="create">Create</button>
+</p>
 
-
-
+<p>
+  <button id="refresh">refresh</button>
+</p>
 
 <script>
+    
+  onmessage = (event) => {
+    console.log(event.data.pluginMessage);
+    var messages = event.data.pluginMessage.split(',');
+    var product = messages[0];
+    var US_ID = messages[1];
+    var US_title = messages[2];   
+    document.getElementById("product").value = product;
+    document.getElementById("US_ID").value = US_ID;
+    document.getElementById("US_title").value = US_title;
+
+  }
+
 
   document.getElementById('create').onclick = () => {
-    parent.postMessage({ pluginMessage: { type: 'create-frame' } }, '*')
-  }
 
-  document.getElementById('create-content').onclick = () => {
+    var product = document.getElementById("product").value;
+    var US_ID = document.getElementById("US_ID").value;
+    var US_title = document.getElementById("US_title").value;
+    const msg = product + ',' + US_ID + ',' + US_title;
 
-    parent.postMessage({ pluginMessage: { type: 'create-content' } }, '*')
+    parent.postMessage({ pluginMessage: msg }, '*')
 
-  }
-  document.getElementById('thumbnail').onclick = () => {
-    parent.postMessage({ pluginMessage: { type: 'set-as-thumbnail' } }, '*')
-  }
-  document.getElementById('cancel').onclick = () => {
-    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
   }
 
 
+
+  document.getElementById('refresh').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'refresh' } }, '*')
+  }
+  
+  
 
 </script>

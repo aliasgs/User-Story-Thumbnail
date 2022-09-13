@@ -5,8 +5,9 @@ let bgHex = '#007CBF';
 
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__);
-
+figma.showUI(__html__,
+    { width: 250, height: 600, title: "User Story Thumbnail" }
+)
 
 
 
@@ -55,23 +56,102 @@ function createPageAndFrame() {
 
 
 
-function createContent() {
+function createContent(type, _messages: any, y: number) {
 
   (async () => {
 
-    const text = figma.createText()
+    const PageNode = figma.root.findOne(n => n.name === "[User Story]") as PageNode;
+    const FrameNode = PageNode.findOne(n => n.name === "[User Story]") as FrameNode;
+   
+  
+    
+    if (type === "product") {
+      const text = figma.createText()
+      text.x = 50
+      text.y = y
 
-    // Move to (50, 50)
-    text.x = 50
-    text.y = 50
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      await figma.loadFontAsync({ family: "Inter", style: "Bold" })
+      text.characters = "Product:";
+      text.fontName = {
+        family: "Inter",
+        style: "Bold"
+      }
+      text.fontSize = 25
+      text.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
 
-    // Load the font in the text node before setting the characters
-    await figma.loadFontAsync({ family: "Inter", style: "Regular" })
-    text.characters = 'Hello world!'
+      FrameNode.appendChild(text);
 
-    // Set bigger font size and red color
-    text.fontSize = 48
-    text.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+
+      const text1 = figma.createText()
+      text1.x = 50
+      text1.y = y + 25
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      text1.characters = _messages;
+      text1.name = "product_name";
+      text1.fontSize = 48
+      text1.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+  
+      FrameNode.appendChild(text1);
+     
+    }
+    if (type === "id") {
+      const text = figma.createText()
+      text.x = 50
+      text.y = y
+
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      text.characters = "User Story ID:";
+
+      text.fontSize = 25
+      text.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+
+      FrameNode.appendChild(text);
+
+      const text1 = figma.createText()
+      text1.x = 50
+      text1.y = y + 25
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      text1.characters = _messages;
+      text1.name = "US_ID_name";
+
+      text1.fontSize = 48
+      text1.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+  
+      FrameNode.appendChild(text1);
+    }
+    if (type === "title") {
+      const text = figma.createText()
+      text.x = 50
+      text.y = y
+
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      text.characters = "User Story Title:";
+
+      text.fontSize = 25
+      text.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+
+      FrameNode.appendChild(text);
+
+      const text1 = figma.createText()
+      text1.x = 50
+      text1.y = y + 25
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      text1.characters = _messages;
+      text1.name = "US_title_name";
+
+      text1.fontSize = 48
+      text1.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+  
+      FrameNode.appendChild(text1);
+    }
+
 
 
   })()
@@ -81,39 +161,96 @@ function createContent() {
 
 
 figma.ui.onmessage = msg => {
-  if (msg.type === 'create-frame') {
-    
-    if(figma.root.findOne(n => n.name === "[User Story]")===null){
-      createPageAndFrame();
+
+    if(msg.type=='refresh'){
+
+            //sync values
+            const PageNode = figma.root.findOne(n => n.name === "[User Story]") as PageNode;
+
+            if(PageNode){
+              const FrameNode = PageNode.findOne(n => n.name === "[User Story]") as FrameNode;
+              const children = FrameNode.children;
+              //console.log(children);
+              if(children.length > 0){
+                let message_array: Array<string> = [];
+                for (let i = 0; i < children.length; i++) {
+                  if(children[i].name == "product_name"){
+                    //console.log((children[i] as TextNode).characters);
+                    message_array.splice(0,0,(children[i] as TextNode).characters);
+                    //console.log(message_array);
+                  }
+                  if(children[i].name == "US_ID_name"){
+                    //console.log((children[i] as TextNode).characters);
+                    message_array.splice(2,0,(children[i] as TextNode).characters);
+                    //console.log(message_array);
+                  }
+                  if(children[i].name == "US_title_name"){
+                    //console.log((children[i] as TextNode).characters);
+                    message_array.splice(2,0,(children[i] as TextNode).characters);
+                    //console.log(message_array);
+                  }
+
+                }
+                figma.ui.postMessage(message_array[0] + "," + message_array[1] + "," + message_array[2]);
+              }else{
+                figma.notify("No data")
+              }
+            }
     }else{
-      figma.notify("User story page already exists!");
+
+
+
+    if (figma.root.findOne(n => n.name === "[User Story]") === null) {
+      createPageAndFrame();
+      figma.notify("frame created!");
     }
-    figma.notify("frame created!");
+    
+  
 
+
+ 
+  
+
+    const PageNode = figma.root.findOne(n => n.name === "[User Story]") as PageNode;
+    const FrameNode = PageNode.findOne(n => n.name === "[User Story]") as FrameNode;
+    const children = FrameNode.children;
+    if(children.length > 0){
+        for (let i = 0; i < children.length; i++) {
+        children[i].remove();
+      }
+    }
+
+    var messages = msg.split(',');
+    var product = messages[0];
+    var US_ID = messages[1];
+    var US_title = messages[2];
+
+    createContent("product", product, 50);
+    createContent("id", US_ID, 250);
+    createContent("title", US_title, 400);
+
+
+    if (FrameNode) {
+      figma.setFileThumbnailNodeAsync(FrameNode);
+      figma.notify("thumbnail set!")
+    }
+
+  
   }
+}
 
-  if (msg.type === 'create-content') {
-    createContent();
-    figma.notify("content created!");
-
-  }
-
+/*
+figma.ui.onmessage = msg => {
+  
 
   if (msg.type === 'set-as-thumbnail') {
 
-    if (figma.currentPage.id === coverPage.id) {
-      const template = figma.currentPage.findAllWithCriteria({
-        types: ['FRAME']
-      })
-
-      figma.setFileThumbnailNodeAsync(template[0]);
+    const PageNode = figma.root.findOne(n => n.name === "[User Story]") as PageNode;
+    const FrameNode = PageNode.findOne(n => n.name === "[User Story]") as FrameNode;
+    if (FrameNode) {
+      figma.setFileThumbnailNodeAsync(FrameNode);
       figma.notify("thumbnail set!")
-
-    } else {
-      figma.notify("Go to the Thumbnail page!")
     }
-
-
 
   }
 
@@ -123,7 +260,7 @@ figma.ui.onmessage = msg => {
 
 
 };
-
+*/
 
 
 
@@ -137,3 +274,4 @@ function hexToRgb(hex: string) {
     }
     : null;
 }
+
