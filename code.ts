@@ -1,4 +1,4 @@
-let cover: PageNode;
+let coverPage: PageNode;
 let frame: FrameNode;
 
 let bgHex = '#007CBF';
@@ -12,28 +12,28 @@ figma.showUI(__html__);
 
 function createPageAndFrame() {
   //creating page
-  cover = figma.createPage();
-  cover.name = 'Thumbnail';
+  coverPage = figma.createPage();
+  coverPage.name = '[User Story]';
   //setting background to bgHex variable
-  cover.backgrounds = [
+  coverPage.backgrounds = [
     {
       type: 'SOLID',
       color: {
-        r: hexToRgb(bgHex).r,
-        g: hexToRgb(bgHex).g,
-        b: hexToRgb(bgHex).b,
+        r: 1,
+        g: 1,
+        b: 1,
       },
     },
   ];
   //setting current page to this new page
-  figma.currentPage = cover;
+  figma.currentPage = coverPage;
 
   //insert new page at the top of the root (second page)
-  figma.root.insertChild(0, cover);
+  figma.root.insertChild(0, coverPage);
 
   //creating frame
   frame = figma.createFrame();
-  frame.name = 'Thumbnail';
+  frame.name = '[User Story]';
   frame.resize(1600, 960);
   frame.fills = [
     {
@@ -82,8 +82,12 @@ function createContent() {
 
 figma.ui.onmessage = msg => {
   if (msg.type === 'create-frame') {
-
-    createPageAndFrame();
+    
+    if(figma.root.findOne(n => n.name === "[User Story]")===null){
+      createPageAndFrame();
+    }else{
+      figma.notify("User story page already exists!");
+    }
     figma.notify("frame created!");
 
   }
@@ -97,7 +101,7 @@ figma.ui.onmessage = msg => {
 
   if (msg.type === 'set-as-thumbnail') {
 
-    if (figma.currentPage.id === cover.id) {
+    if (figma.currentPage.id === coverPage.id) {
       const template = figma.currentPage.findAllWithCriteria({
         types: ['FRAME']
       })
@@ -113,8 +117,11 @@ figma.ui.onmessage = msg => {
 
   }
 
+  if (msg.type === 'cancel') {
+    figma.closePlugin();
+  }
 
-  //figma.closePlugin();
+
 };
 
 
