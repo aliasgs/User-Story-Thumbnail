@@ -1,29 +1,49 @@
 <h2>Create User Story Thumbnail</h2>
 
 <p>
-  <input type="text" id="product" placeholder="Type Product">
-  <input type="text" id="US_ID" placeholder="Type User Story ID">
-  <input type="text" id="US_title" placeholder="Type User Story Title">
+  <label>Product:</label><br>
+  <input type="text" id="product" placeholder="Type Product"><br>
+  <label>User Story ID:</label><br>
+  <input type="text" id="US_ID" placeholder="Type User Story ID"><br>
+  <label>User Story Title:</label><br>
+  <input type="text" id="US_title" placeholder="Type User Story Title"><br>
+  <label>User Story Status:</label><br>
+  <select name="status" id="US_status"><br>
+    <option value="draft">draft</option>
+    <option value="readyforplanning">ready for planning</option>
+    <option value="planinginprogress">planing in progress</option>
+    <option value="readyforwork">ready for work</option>
+    <option value="workinprogress">work in progress</option>
+    <option value="workblocked">work blocked</option>
+    <option value="readyforacceptance">ready for acceptance</option>
+    <option value="acceptanceblocked">acceptance blocked</option>
+    <option value="cancelled">cancelled</option>
+    <option value="new">new</option>
+    <option value="completed">completed</option>
+  </select>
+
 </p>
 <p>
   <button id="create">Create</button>
-</p>
-
-<p>
-  <button id="refresh">refresh</button>
+  <button id="refresh">Refresh</button>
 </p>
 
 <script>
     
   onmessage = (event) => {
-    console.log(event.data.pluginMessage);
+    //console.log(event.data.pluginMessage);
     var messages = event.data.pluginMessage.split(',');
     var product = messages[0];
     var US_ID = messages[1];
     var US_title = messages[2];   
+    var US_status = messages[3];   
+
     document.getElementById("product").value = product;
     document.getElementById("US_ID").value = US_ID;
     document.getElementById("US_title").value = US_title;
+    
+    US_status=US_status.replace(/ +/g, "");
+    document.getElementById("US_status").value = US_status;
 
   }
 
@@ -33,7 +53,11 @@
     var product = document.getElementById("product").value;
     var US_ID = document.getElementById("US_ID").value;
     var US_title = document.getElementById("US_title").value;
-    const msg = product + ',' + US_ID + ',' + US_title;
+
+    var e = document.getElementById("US_status");
+    var US_status = e.options[e.selectedIndex].text;
+
+    const msg = product + ',' + US_ID + ',' + US_title + ',' + US_status;
 
     parent.postMessage({ pluginMessage: msg }, '*')
 

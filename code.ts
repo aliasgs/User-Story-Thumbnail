@@ -151,6 +151,33 @@ function createContent(type, _messages: any, y: number) {
   
       FrameNode.appendChild(text1);
     }
+    if (type === "status") {
+      const text = figma.createText()
+      text.x = 50
+      text.y = y
+
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      text.characters = "User Story Status:";
+
+      text.fontSize = 25
+      text.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+
+      FrameNode.appendChild(text);
+
+      const text1 = figma.createText()
+      text1.x = 50
+      text1.y = y + 25
+      // Load the font in the text node before setting the characters
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" })
+      text1.characters = _messages;
+      text1.name = "US_status_name";
+
+      text1.fontSize = 48
+      text1.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]
+  
+      FrameNode.appendChild(text1);
+    }
 
 
 
@@ -181,7 +208,7 @@ figma.ui.onmessage = msg => {
                   }
                   if(children[i].name == "US_ID_name"){
                     //console.log((children[i] as TextNode).characters);
-                    message_array.splice(2,0,(children[i] as TextNode).characters);
+                    message_array.splice(1,0,(children[i] as TextNode).characters);
                     //console.log(message_array);
                   }
                   if(children[i].name == "US_title_name"){
@@ -189,9 +216,14 @@ figma.ui.onmessage = msg => {
                     message_array.splice(2,0,(children[i] as TextNode).characters);
                     //console.log(message_array);
                   }
+                  if(children[i].name == "US_status_name"){
+                    //console.log((children[i] as TextNode).characters);
+                    message_array.splice(3,0,(children[i] as TextNode).characters);
+                    //console.log(message_array);
+                  }
 
                 }
-                figma.ui.postMessage(message_array[0] + "," + message_array[1] + "," + message_array[2]);
+                figma.ui.postMessage(message_array[0] + "," + message_array[1] + "," + message_array[2] + "," + message_array[3]);
               }else{
                 figma.notify("No data")
               }
@@ -224,10 +256,12 @@ figma.ui.onmessage = msg => {
     var product = messages[0];
     var US_ID = messages[1];
     var US_title = messages[2];
+    var US_status = messages[3];
 
     createContent("product", product, 50);
     createContent("id", US_ID, 250);
     createContent("title", US_title, 400);
+    createContent("status", US_status, 550);
 
 
     if (FrameNode) {
@@ -238,30 +272,6 @@ figma.ui.onmessage = msg => {
   
   }
 }
-
-/*
-figma.ui.onmessage = msg => {
-  
-
-  if (msg.type === 'set-as-thumbnail') {
-
-    const PageNode = figma.root.findOne(n => n.name === "[User Story]") as PageNode;
-    const FrameNode = PageNode.findOne(n => n.name === "[User Story]") as FrameNode;
-    if (FrameNode) {
-      figma.setFileThumbnailNodeAsync(FrameNode);
-      figma.notify("thumbnail set!")
-    }
-
-  }
-
-  if (msg.type === 'cancel') {
-    figma.closePlugin();
-  }
-
-
-};
-*/
-
 
 
 function hexToRgb(hex: string) {
