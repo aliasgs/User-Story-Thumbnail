@@ -1,3 +1,7 @@
+First, open the Figma menu and scroll to Plugins > Development > Import plugin from manifest.
+
+----------
+
 Below are the steps to get your plugin running. You can also find instructions at:
 
   https://www.figma.com/plugin-docs/setup/
